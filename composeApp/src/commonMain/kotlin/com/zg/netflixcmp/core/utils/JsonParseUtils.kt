@@ -5,5 +5,5 @@ import kotlinx.serialization.json.Json
 val universalJsonParser = Json {
     ignoreUnknownKeys = true
     explicitNulls = false
-    isLenient = true
+    prettyPrint = true
 }

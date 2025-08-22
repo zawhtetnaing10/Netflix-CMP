@@ -13,6 +13,7 @@ class BelongsToCollectionTypeConverter {
         }
     }
 
+    @TypeConverter
     fun toBelongsToCollection(jsonString: String?): BelongsToCollectionVO? {
         return jsonString?.let {
             universalJsonParser.decodeFromString(jsonString)

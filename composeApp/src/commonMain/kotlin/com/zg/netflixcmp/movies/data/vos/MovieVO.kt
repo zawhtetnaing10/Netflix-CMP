@@ -1,6 +1,7 @@
 package com.zg.netflixcmp.movies.data.vos
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.zg.netflixcmp.core.utils.FEATURED_MOVIE_IMAGE_BASE_URL
 import com.zg.netflixcmp.core.utils.GENERAL_MOVIE_IMAGE_BASE_URL
 import kotlinx.serialization.SerialName
@@ -10,6 +11,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MovieVO(
     @SerialName("id")
+    @PrimaryKey(autoGenerate = false)
     val id: Int,
     @SerialName("adult")
     val adult: Boolean,
@@ -25,8 +27,8 @@ data class MovieVO(
     val homepage: String?,
     @SerialName("imdb_id")
     val imdbId: String?,
-    @SerialName("original_country")
-    val originalCountry: String?,
+    @SerialName("origin_country")
+    val originCountry: List<String>?,
     @SerialName("genre_ids")
     val genreIds: List<Int>?,
     @SerialName("original_language")

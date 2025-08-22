@@ -19,6 +19,13 @@ class MovieDetailsViewModel(val movieId: Int) : ViewModel() {
     val state = _state.asStateFlow()
 
     init {
+
+        // Get data from db and show it first
+        viewModelScope.launch {
+            val movieDetailsFromDb = movieRepository.getMoviesByIdFromDb(movieId)
+            _state.update { it.copy(movieDetails = movieDetailsFromDb) }
+        }
+
         viewModelScope.launch {
             val movieDetails = movieRepository.getMovieDetails(movieId)
             _state.update { it.copy(movieDetails = movieDetails) }

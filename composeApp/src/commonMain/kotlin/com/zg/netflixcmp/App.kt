@@ -9,7 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import androidx.room.RoomDatabase
 import com.zg.netflixcmp.auth.screens.LoginScreen
+import com.zg.netflixcmp.core.data.AppDatabaseProvider
+import com.zg.netflixcmp.core.persistence.AppDatabase
 import com.zg.netflixcmp.movies.presentation.HomeScreen
 import com.zg.netflixcmp.movies.presentation.HomeViewModel
 import com.zg.netflixcmp.movies.presentation.MovieDetailsScreen
@@ -19,7 +22,12 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun App() {
+fun App(
+    databaseBuilder: RoomDatabase.Builder<AppDatabase>
+) {
+
+    // Initialize AppDatabase
+    AppDatabaseProvider.initializeAppDatabase(databaseBuilder)
 
     val navController = rememberNavController()
 

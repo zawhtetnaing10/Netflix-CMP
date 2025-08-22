@@ -1,22 +1,32 @@
 package com.zg.netflixcmp.movies.data.repositories
 
+import androidx.room.Room
+import com.zg.netflixcmp.core.data.AppDatabaseProvider
 import com.zg.netflixcmp.movies.data.vos.GenreVO
 import com.zg.netflixcmp.movies.data.vos.MovieVO
 import com.zg.netflixcmp.movies.network.api_services.MoviesApiService
 import com.zg.netflixcmp.movies.network.api_services.impls.MoviesApiServiceImpl
 import com.zg.netflixcmp.movies.network.responses.MovieListResponse
+import com.zg.netflixcmp.core.persistence.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 object MoviesRepository {
     val movieApiService: MoviesApiService = MoviesApiServiceImpl
 
+    val appDatabase = AppDatabaseProvider.appDatabase
+
     suspend fun getNowPlayingMovies(): MovieListResponse? {
         return withContext(Dispatchers.IO) {
-            movieApiService.getNowPlayingMovies(1)
+            val nowPlayingMovies = movieApiService.getNowPlayingMovies(1)
+            launch {
+                appDatabase?.movieDao()?.insertMovies(nowPlayingMovies?.results ?: listOf())
+            }
+            return@withContext nowPlayingMovies
         }
     }
 
@@ -28,6 +38,14 @@ object MoviesRepository {
                 return@withContext getMovieDetails(firstNowPlayingMovie.id)
             }
         }
+    }
+
+    suspend fun getFeaturedMovieFromDb() : MovieVO? {
+        return appDatabase?.movieDao()?.getFeaturedMovie()
+    }
+
+    suspend fun getMoviesByIdFromDb(movieId : Int) : MovieVO? {
+        return appDatabase?.movieDao()?.getMovieById(movieId)
     }
 
     suspend fun getGenres(): List<GenreVO> {
