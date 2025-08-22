@@ -1,0 +1,9 @@
+package com.zg.netflixcmp.core.utils
+
+import kotlinx.serialization.json.Json
+
+val universalJsonParser = Json {
+    ignoreUnknownKeys = true
+    explicitNulls = false
+    isLenient = true
+}
