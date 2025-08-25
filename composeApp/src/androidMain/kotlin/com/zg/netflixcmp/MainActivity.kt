@@ -7,7 +7,9 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.zg.netflixcmp.core.persistence.AndroidDatabaseDriverFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,8 +19,10 @@ class MainActivity : ComponentActivity() {
         )
         super.onCreate(savedInstanceState)
 
+        val databaseDriverFactory = AndroidDatabaseDriverFactory(context = this)
+
         setContent {
-            App()
+            App(databaseDriverFactory)
         }
     }
 }
@@ -26,5 +30,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App()
+    App(databaseDriverFactory = AndroidDatabaseDriverFactory(context = LocalContext.current))
 }

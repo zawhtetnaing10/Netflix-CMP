@@ -1,12 +1,13 @@
 package com.zg.netflixcmp.movies.data.vos
 
 import androidx.room.Entity
+import com.zg.netflixcmp.core.persistence.Movie
 import com.zg.netflixcmp.core.utils.FEATURED_MOVIE_IMAGE_BASE_URL
 import com.zg.netflixcmp.core.utils.GENERAL_MOVIE_IMAGE_BASE_URL
+import com.zg.netflixcmp.core.utils.universalJsonParser
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Entity(tableName = "movies")
 @Serializable
 data class MovieVO(
     @SerialName("id")
@@ -67,11 +68,12 @@ data class MovieVO(
     @SerialName("vote_count")
     val voteCount: Int
 ) {
-    fun getFullPosterPath() : String{
+
+    fun getFullPosterPath(): String {
         return "$FEATURED_MOVIE_IMAGE_BASE_URL$posterPath"
     }
 
-    fun getFullBackdropPath() : String {
+    fun getFullBackdropPath(): String {
         return "$GENERAL_MOVIE_IMAGE_BASE_URL$backdropPath"
     }
 }

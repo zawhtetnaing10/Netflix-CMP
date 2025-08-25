@@ -18,7 +18,16 @@ class HomeViewModel : ViewModel() {
     val state = _state.asStateFlow()
 
     init {
-        // Now playing movies
+
+        // Featured Movie from DB
+        viewModelScope.launch {
+            val featuredMovie = movieRepository.getFeaturedMovieFromDB()
+            _state.update {
+                it.copy(featuredMovie = featuredMovie)
+            }
+        }
+
+        // Featured Movie
         viewModelScope.launch {
             val featuredMovie = movieRepository.getFeaturedMovie()
             _state.update {

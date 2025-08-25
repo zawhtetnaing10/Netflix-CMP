@@ -1,5 +1,6 @@
 package com.zg.netflixcmp.movies.data.repositories
 
+import com.zg.netflixcmp.core.persistence.DatabaseProvider
 import com.zg.netflixcmp.movies.data.vos.GenreVO
 import com.zg.netflixcmp.movies.data.vos.MovieVO
 import com.zg.netflixcmp.movies.network.api_services.MoviesApiService
@@ -9,14 +10,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 object MoviesRepository {
     val movieApiService: MoviesApiService = MoviesApiServiceImpl
 
+    // Database
+    internal val database = DatabaseProvider.database
+
     suspend fun getNowPlayingMovies(): MovieListResponse? {
         return withContext(Dispatchers.IO) {
-            movieApiService.getNowPlayingMovies(1)
+            val nowPlayingMovies = movieApiService.getNowPlayingMovies(1)
+
+            launch {
+                nowPlayingMovies?.results?.let {
+                    database?.insertMovies(it)
+                }
+            }
+
+            return@withContext nowPlayingMovies
         }
     }
 
@@ -27,6 +40,20 @@ object MoviesRepository {
             firstNowPlayingMovie?.let {
                 return@withContext getMovieDetails(firstNowPlayingMovie.id)
             }
+        }
+    }
+
+    // Get featured movie from db
+    suspend fun getFeaturedMovieFromDB(): MovieVO? {
+        return withContext(Dispatchers.IO) {
+            return@withContext database?.getFirstMovie()
+        }
+    }
+
+    // Get movie by id from db
+    suspend fun getMovieByIdFromDb(movieId: Int): MovieVO? {
+        return withContext(Dispatchers.IO) {
+            return@withContext database?.getMovieById(movieId)
         }
     }
 
@@ -61,7 +88,15 @@ object MoviesRepository {
 
     suspend fun getMovieDetails(movieId: Int): MovieVO? {
         return withContext(Dispatchers.IO) {
-            movieApiService.getMovieDetails(movieId)
+            val movieDetails = movieApiService.getMovieDetails(movieId)
+
+            launch {
+                movieDetails?.let {
+                    database?.insertSingleMovieFull(movieDetails)
+                }
+            }
+
+            return@withContext movieDetails
         }
     }
 }

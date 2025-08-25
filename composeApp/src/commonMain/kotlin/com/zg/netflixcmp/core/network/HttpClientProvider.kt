@@ -34,7 +34,7 @@ object HttpClientProvider {
             // Time outs
             install(HttpTimeout){
                 connectTimeoutMillis = 30.seconds.inWholeMilliseconds
-                socketTimeoutMillis = 10.seconds.inWholeMilliseconds
+                socketTimeoutMillis = 30.seconds.inWholeMilliseconds
                 requestTimeoutMillis = 30.seconds.inWholeMilliseconds
             }
         }
