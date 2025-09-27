@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.zg.netflixcmp.movies.data.vos.MovieVO
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MovieDao {
@@ -12,10 +13,10 @@ interface MovieDao {
     suspend fun insertMovies(movies: List<MovieVO>)
 
     @Query("SELECT * FROM movies WHERE id = :movieId LIMIT 1")
-    suspend fun getMovieById(movieId: Int) : MovieVO?
+    fun getMovieById(movieId: Int): Flow<MovieVO?>
 
     @Query("SELECT * FROM movies LIMIT 1")
-    suspend fun getFeaturedMovie() : MovieVO?
+    suspend fun getFeaturedMovie(): MovieVO?
 
     @Query("SELECT * FROM movies")
     suspend fun getAllMovies(): List<MovieVO>

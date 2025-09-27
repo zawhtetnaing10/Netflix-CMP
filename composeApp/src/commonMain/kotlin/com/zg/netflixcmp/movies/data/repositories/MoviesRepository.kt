@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -24,7 +25,7 @@ object MoviesRepository {
         return withContext(Dispatchers.IO) {
             val nowPlayingMovies = movieApiService.getNowPlayingMovies(1)
             launch {
-                appDatabase?.movieDao()?.insertMovies(nowPlayingMovies?.results ?: listOf())
+                appDatabase.movieDao().insertMovies(nowPlayingMovies?.results ?: listOf())
             }
             return@withContext nowPlayingMovies
         }
@@ -40,12 +41,12 @@ object MoviesRepository {
         }
     }
 
-    suspend fun getFeaturedMovieFromDb() : MovieVO? {
-        return appDatabase?.movieDao()?.getFeaturedMovie()
+    suspend fun getFeaturedMovieFromDb(): MovieVO? {
+        return appDatabase.movieDao().getFeaturedMovie()
     }
 
-    suspend fun getMoviesByIdFromDb(movieId : Int) : MovieVO? {
-        return appDatabase?.movieDao()?.getMovieById(movieId)
+    suspend fun getMoviesByIdFromDb(movieId: Int): Flow<MovieVO?> {
+        return appDatabase.movieDao().getMovieById(movieId)
     }
 
     suspend fun getGenres(): List<GenreVO> {
@@ -79,7 +80,11 @@ object MoviesRepository {
 
     suspend fun getMovieDetails(movieId: Int): MovieVO? {
         return withContext(Dispatchers.IO) {
-            movieApiService.getMovieDetails(movieId)
+            val movieDetails = movieApiService.getMovieDetails(movieId)
+            movieDetails?.let {
+                appDatabase.movieDao().saveSingleMovie(movieDetails)
+            }
+            movieDetails
         }
     }
 }

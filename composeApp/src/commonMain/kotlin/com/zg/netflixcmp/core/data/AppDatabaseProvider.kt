@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
 object AppDatabaseProvider {
-    var appDatabase: AppDatabase? = null
+    lateinit var appDatabase: AppDatabase
 
     fun initializeAppDatabase(databaseBuilder: RoomDatabase.Builder<AppDatabase>) {
         appDatabase = databaseBuilder

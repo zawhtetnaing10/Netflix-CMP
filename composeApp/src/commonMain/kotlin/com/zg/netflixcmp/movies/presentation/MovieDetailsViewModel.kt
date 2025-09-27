@@ -22,13 +22,17 @@ class MovieDetailsViewModel(val movieId: Int) : ViewModel() {
 
         // Get data from db and show it first
         viewModelScope.launch {
-            val movieDetailsFromDb = movieRepository.getMoviesByIdFromDb(movieId)
-            _state.update { it.copy(movieDetails = movieDetailsFromDb) }
+            movieRepository.getMoviesByIdFromDb(movieId)
+                .collect { movieDetails ->
+                    _state.update { it.copy(movieDetails = movieDetails) }
+                }
         }
 
         viewModelScope.launch {
             val movieDetails = movieRepository.getMovieDetails(movieId)
-            _state.update { it.copy(movieDetails = movieDetails) }
+
+            // Stop the state update and let persistence layer handle this.
+            //_state.update { it.copy(movieDetails = movieDetails) }
 
             movieDetails?.genres?.let {
                 viewModelScope.launch {
