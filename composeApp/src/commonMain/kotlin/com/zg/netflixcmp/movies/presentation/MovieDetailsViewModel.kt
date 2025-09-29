@@ -3,8 +3,13 @@ package com.zg.netflixcmp.movies.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zg.netflixcmp.movies.data.repositories.MoviesRepository
+import com.zg.netflixcmp.movies.presentation.actions.DetailsActions
+import com.zg.netflixcmp.movies.presentation.events.DetailsEvents
 import com.zg.netflixcmp.movies.presentation.states.MovieDetailsState
+import io.ktor.events.Events
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -17,6 +22,10 @@ class MovieDetailsViewModel(val movieId: Int) : ViewModel() {
     // State
     private val _state = MutableStateFlow(MovieDetailsState())
     val state = _state.asStateFlow()
+
+    // Events
+    private val _events = MutableSharedFlow<DetailsEvents>()
+    val events = _events.asSharedFlow()
 
     init {
 
@@ -39,6 +48,17 @@ class MovieDetailsViewModel(val movieId: Int) : ViewModel() {
                     val similarMovies =
                         movieRepository.getMoviesByGenre(movieDetails.genres.first().id)
                     _state.update { it.copy(similarMovies = similarMovies) }
+                }
+            }
+        }
+    }
+
+    // Handle Action
+    fun handleAction(action: DetailsActions) {
+        when (action) {
+            is DetailsActions.OnTapBack -> {
+                viewModelScope.launch {
+                    _events.emit(DetailsEvents.NavigateBack)
                 }
             }
         }

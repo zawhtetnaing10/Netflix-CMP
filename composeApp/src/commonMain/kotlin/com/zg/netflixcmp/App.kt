@@ -13,10 +13,12 @@ import androidx.room.RoomDatabase
 import com.zg.netflixcmp.auth.screens.LoginScreen
 import com.zg.netflixcmp.core.data.AppDatabaseProvider
 import com.zg.netflixcmp.core.persistence.AppDatabase
-import com.zg.netflixcmp.movies.presentation.HomeScreen
+import com.zg.netflixcmp.movies.presentation.HomeRoute
 import com.zg.netflixcmp.movies.presentation.HomeViewModel
-import com.zg.netflixcmp.movies.presentation.MovieDetailsScreen
+import com.zg.netflixcmp.movies.presentation.MovieDetailsRoute
 import com.zg.netflixcmp.movies.presentation.MovieDetailsViewModel
+import com.zg.netflixcmp.movies.presentation.events.DetailsEvents
+import com.zg.netflixcmp.movies.presentation.events.HomeEvents
 import com.zg.netflixcmp.utils.NetflixSansTypography
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -56,10 +58,14 @@ fun App(
                 // Initialize View Model
                 val homeViewModel = viewModel { HomeViewModel() }
 
-                HomeScreen(
+                HomeRoute(
                     viewModel = homeViewModel,
-                    onTapMovie = { movieId ->
-                        navController.navigate(AppRoute.MovieDetails(movieId))
+                    onNavigation = { event ->
+                        when (event) {
+                            is HomeEvents.NavigateToMovieDetails -> {
+                                navController.navigate(AppRoute.MovieDetails(event.movieId))
+                            }
+                        }
                     })
             }
 
@@ -74,10 +80,14 @@ fun App(
 
                 val detailsViewModel = viewModel { MovieDetailsViewModel(movieId = args.movieId) }
 
-                MovieDetailsScreen(
+                MovieDetailsRoute(
                     viewModel = detailsViewModel,
-                    onTapBack = {
-                        navController.navigateUp()
+                    onNavigation = { event ->
+                        when(event){
+                            is DetailsEvents.NavigateBack -> {
+                                navController.navigateUp()
+                            }
+                        }
                     })
             }
         }

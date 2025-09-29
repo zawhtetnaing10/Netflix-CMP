@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,11 +34,14 @@ import chaintech.videoplayer.host.MediaPlayerHost
 import chaintech.videoplayer.model.PlayerSpeed
 import chaintech.videoplayer.model.ScreenResize
 import chaintech.videoplayer.ui.video.VideoPlayerComposable
+import com.zg.netflixcmp.movies.presentation.actions.DetailsActions
 import com.zg.netflixcmp.movies.presentation.components.NetflixMoviePrimaryButton
 import com.zg.netflixcmp.movies.presentation.components.NetflixMovieSecondaryButton
 import com.zg.netflixcmp.movies.presentation.components.details.MovieAdditionalInfo
 import com.zg.netflixcmp.movies.presentation.components.details.MovieDetailsActions
 import com.zg.netflixcmp.movies.presentation.components.home.MovieListItem
+import com.zg.netflixcmp.movies.presentation.events.DetailsEvents
+import com.zg.netflixcmp.movies.presentation.states.MovieDetailsState
 import com.zg.netflixcmp.utils.Black
 import com.zg.netflixcmp.utils.DetailIconsGrey
 import com.zg.netflixcmp.utils.MARGIN_CARD_MEDIUM_2
@@ -53,19 +57,39 @@ import com.zg.netflixcmp.utils.TEXT_REGULAR
 import com.zg.netflixcmp.utils.TEXT_REGULAR_2X
 import com.zg.netflixcmp.utils.TEXT_REGULAR_3X
 import com.zg.netflixcmp.utils.White
+import kotlinx.coroutines.flow.collectLatest
 import netflixcmp.composeapp.generated.resources.Res
 import netflixcmp.composeapp.generated.resources.download
 import netflixcmp.composeapp.generated.resources.netflix_n_logo
 import org.jetbrains.compose.resources.painterResource
-import kotlin.math.ceil
 
 @Composable
-fun MovieDetailsScreen(
+fun MovieDetailsRoute(
     viewModel: MovieDetailsViewModel,
-    onTapBack: () -> Unit
+    onNavigation: (DetailsEvents) -> Unit,
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collectLatest {
+            onNavigation(it)
+        }
+    }
+
+    MovieDetailsScreen(
+        state = state,
+        onAction = {
+            viewModel.handleAction(it)
+        }
+    )
+}
+
+@Composable
+fun MovieDetailsScreen(
+    state: MovieDetailsState,
+    onAction: (DetailsActions) -> Unit
+) {
 
     // For Video Player
     val videoPlayerHost = MediaPlayerHost(
@@ -102,7 +126,7 @@ fun MovieDetailsScreen(
                             .size(MARGIN_XXLARGE)
                             .align(Alignment.TopStart)
                             .clickable {
-                                onTapBack()
+                                onAction(DetailsActions.OnTapBack)
                             }
                     )
                 }
@@ -267,11 +291,3 @@ fun MovieDetailsScreen(
         }
     }
 }
-
-//@Preview()
-//@Composable
-//fun MovieDetailsScreenPreview() {
-//    MovieDetailsScreen(
-//        onTapBack = {}
-//    )
-//}

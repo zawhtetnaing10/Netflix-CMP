@@ -9,27 +9,46 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zg.netflixcmp.movies.presentation.actions.HomeActions
 import com.zg.netflixcmp.movies.presentation.components.home.CategoriesSection
 import com.zg.netflixcmp.movies.presentation.components.home.FeaturedMovie
 import com.zg.netflixcmp.movies.presentation.components.home.HomeScreenAppbar
 import com.zg.netflixcmp.movies.presentation.components.home.TitleAndMovieList
+import com.zg.netflixcmp.movies.presentation.events.HomeEvents
+import com.zg.netflixcmp.movies.presentation.states.HomeState
 import com.zg.netflixcmp.utils.Black
 import com.zg.netflixcmp.utils.FEATURED_MOVIE_HEIGHT
 import com.zg.netflixcmp.utils.MARGIN_MEDIUM_2
 import com.zg.netflixcmp.utils.MARGIN_XXLARGE
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun HomeScreen(
+fun HomeRoute(
     viewModel: HomeViewModel,
-    onTapMovie: (Int) -> Unit
+    onNavigation: (HomeEvents) -> Unit
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    // Listen to events
+    LaunchedEffect(Unit) {
+        viewModel.events.collectLatest { event ->
+            onNavigation(event)
+        }
+    }
+
+    HomeScreen(state = state, onAction = {
+        viewModel.handleAction(it)
+    })
+}
+
+@Composable
+fun HomeScreen(state: HomeState, onAction: (HomeActions) -> Unit) {
     Scaffold(
         topBar = {
             HomeScreenAppbar()
@@ -56,12 +75,12 @@ fun HomeScreen(
                 item {
                     // Featured Movie
                     FeaturedMovie(
-                        movie = state.featuredMovie!!,
+                        movie = state.featuredMovie,
                         modifier = Modifier
                             .padding(horizontal = MARGIN_MEDIUM_2)
                             .height(FEATURED_MOVIE_HEIGHT)
                             .clickable {
-                                onTapMovie(state.featuredMovie!!.id)
+                                onAction(HomeActions.OnTapMovie(state.featuredMovie.id))
                             }
                     )
                 }
@@ -74,7 +93,7 @@ fun HomeScreen(
                         genre = state.moviesByGenre[index].first,
                         movies = state.moviesByGenre[index].second,
                         onTapMovie = { movieId ->
-                            onTapMovie(movieId)
+                            onAction(HomeActions.OnTapMovie(movieId))
                         }, modifier = Modifier
                     )
                 }
@@ -88,12 +107,3 @@ fun HomeScreen(
         }
     }
 }
-
-//@Preview
-//@Composable
-//fun HomeScreenPreview() {
-//    HomeScreen(
-//        viewModel {  }
-//        onTapMovie = {}
-//    )
-//}
