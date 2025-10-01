@@ -69,6 +69,8 @@ kotlin {
             api(libs.koin.core)
 
             implementation(libs.compose.multiplatform.media.player)
+
+            implementation("org.reduxkotlin:redux-kotlin-threadsafe:0.6.1")
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)

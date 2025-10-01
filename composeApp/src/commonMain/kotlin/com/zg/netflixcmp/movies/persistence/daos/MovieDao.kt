@@ -13,7 +13,10 @@ interface MovieDao {
     suspend fun insertMovies(movies: List<MovieVO>)
 
     @Query("SELECT * FROM movies WHERE id = :movieId LIMIT 1")
-    fun getMovieById(movieId: Int): Flow<MovieVO?>
+    fun getMovieByIdObservable(movieId: Int): Flow<MovieVO?>
+
+    @Query("SELECT * FROM movies WHERE id = :movieId LIMIT 1")
+    fun getMovieById(movieId: Int): MovieVO?
 
     @Query("SELECT * FROM movies LIMIT 1")
     suspend fun getFeaturedMovie(): MovieVO?

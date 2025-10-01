@@ -1,13 +1,11 @@
 package com.zg.netflixcmp.movies.data.repositories
 
-import androidx.room.Room
 import com.zg.netflixcmp.core.data.AppDatabaseProvider
 import com.zg.netflixcmp.movies.data.vos.GenreVO
 import com.zg.netflixcmp.movies.data.vos.MovieVO
 import com.zg.netflixcmp.movies.network.api_services.MoviesApiService
 import com.zg.netflixcmp.movies.network.api_services.impls.MoviesApiServiceImpl
 import com.zg.netflixcmp.movies.network.responses.MovieListResponse
-import com.zg.netflixcmp.core.persistence.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
@@ -45,7 +43,11 @@ object MoviesRepository {
         return appDatabase.movieDao().getFeaturedMovie()
     }
 
-    suspend fun getMoviesByIdFromDb(movieId: Int): Flow<MovieVO?> {
+    fun getMoviesByIdFromDbObservable(movieId: Int): Flow<MovieVO?> {
+        return appDatabase.movieDao().getMovieByIdObservable(movieId)
+    }
+
+    suspend fun getMoviesByIdFromDb(movieId: Int): MovieVO? {
         return appDatabase.movieDao().getMovieById(movieId)
     }
 

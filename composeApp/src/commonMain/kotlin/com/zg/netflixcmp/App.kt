@@ -4,6 +4,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,8 +18,14 @@ import com.zg.netflixcmp.movies.presentation.HomeScreen
 import com.zg.netflixcmp.movies.presentation.HomeViewModel
 import com.zg.netflixcmp.movies.presentation.MovieDetailsScreen
 import com.zg.netflixcmp.movies.presentation.MovieDetailsViewModel
+import com.zg.netflixcmp.redux.AppState
+import com.zg.netflixcmp.redux.asyncMiddleware
+import com.zg.netflixcmp.redux.coordinator.ComposeAppCoordinator
+import com.zg.netflixcmp.redux.reducer
 import com.zg.netflixcmp.utils.NetflixSansTypography
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.reduxkotlin.applyMiddleware
+import org.reduxkotlin.createStore
 
 @Composable
 @Preview
@@ -30,6 +37,19 @@ fun App(
     AppDatabaseProvider.initializeAppDatabase(databaseBuilder)
 
     val navController = rememberNavController()
+
+    // Coordinator
+    val appCoordinator = remember { ComposeAppCoordinator(navController) }
+
+    // Store -
+    val store = createStore(
+        reducer,
+        AppState(),
+        applyMiddleware(
+            asyncMiddleware
+        )
+    )
+
 
     MaterialTheme(
         typography = NetflixSansTypography()
@@ -54,7 +74,7 @@ fun App(
             ) {
 
                 // Initialize View Model
-                val homeViewModel = viewModel { HomeViewModel() }
+                val homeViewModel = viewModel { HomeViewModel(store) }
 
                 HomeScreen(
                     viewModel = homeViewModel,
@@ -72,7 +92,8 @@ fun App(
 
                 val args = backStackEntry.toRoute<AppRoute.MovieDetails>()
 
-                val detailsViewModel = viewModel { MovieDetailsViewModel(movieId = args.movieId) }
+                val detailsViewModel =
+                    viewModel { MovieDetailsViewModel(movieId = args.movieId, store = store) }
 
                 MovieDetailsScreen(
                     viewModel = detailsViewModel,
