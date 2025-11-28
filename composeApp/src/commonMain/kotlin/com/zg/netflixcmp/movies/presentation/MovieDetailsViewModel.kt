@@ -14,10 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MovieDetailsViewModel(val movieId: Int) : ViewModel() {
-
-    // Repo
-    private val movieRepository = MoviesRepository
+class MovieDetailsViewModel(val movieId: Int, val movieRepository: MoviesRepository) : ViewModel() {
 
     // State
     private val _state = MutableStateFlow(MovieDetailsState())

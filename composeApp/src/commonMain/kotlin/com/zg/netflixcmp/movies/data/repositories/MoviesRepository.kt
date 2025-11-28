@@ -16,10 +16,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-object MoviesRepository {
-    val movieApiService: MoviesApiService = MoviesApiServiceImpl
-
-    val appDatabase = AppDatabaseProvider.appDatabase
+class MoviesRepository(
+    private val movieApiService : MoviesApiService,
+    private val appDatabase: AppDatabase
+){
 
     suspend fun getNowPlayingMovies(): MovieListResponse? {
         return withContext(Dispatchers.IO) {

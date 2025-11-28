@@ -13,10 +13,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class HomeViewModel : ViewModel() {
-
-    // Repository
-    val movieRepository = MoviesRepository
+class HomeViewModel(
+    private val movieRepository : MoviesRepository
+) : ViewModel() {
 
     // State
     private val _state = MutableStateFlow(HomeState())
