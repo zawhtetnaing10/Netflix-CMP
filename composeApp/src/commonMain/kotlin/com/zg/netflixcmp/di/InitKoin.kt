@@ -1,7 +1,5 @@
-package com.zg.netflixcmp.movies.data.repositories
+package com.zg.netflixcmp.di
 
-import com.zg.netflixcmp.di.platformModule
-import com.zg.netflixcmp.di.sharedModule
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 
