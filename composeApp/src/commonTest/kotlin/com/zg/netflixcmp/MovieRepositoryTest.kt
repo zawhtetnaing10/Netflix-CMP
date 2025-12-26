@@ -6,7 +6,7 @@ import com.zg.netflixcmp.mock.data.mockGenres
 import com.zg.netflixcmp.mock.data.mockMovieDetails
 import com.zg.netflixcmp.mock.data.mockMoviesByGenre
 import com.zg.netflixcmp.mock.data.mockNowPlayingMovies
-import com.zg.netflixcmp.movies.data.repositories.MoviesRepository
+import com.zg.netflixcmp.movies.data.repositories.MoviesRepositoryImpl
 import com.zg.netflixcmp.movies.data.vos.GenreVO
 import com.zg.netflixcmp.movies.data.vos.MovieVO
 import com.zg.netflixcmp.movies.network.api_services.MoviesApiService
@@ -21,7 +21,7 @@ import kotlin.test.assertNotNull
 
 class MovieRepositoryTest {
 
-    private lateinit var repo: MoviesRepository
+    private lateinit var repo: MoviesRepositoryImpl
     private lateinit var apiService: MoviesApiService
     private lateinit var movieDao: MovieDao
 
@@ -30,7 +30,7 @@ class MovieRepositoryTest {
         apiService = MockMovieApiService()
         movieDao = MockMovieDao()
 
-        repo = MoviesRepository(apiService, movieDao)
+        repo = MoviesRepositoryImpl(apiService, movieDao)
     }
 
     @Test

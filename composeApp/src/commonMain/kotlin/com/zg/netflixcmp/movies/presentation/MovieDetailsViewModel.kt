@@ -3,10 +3,10 @@ package com.zg.netflixcmp.movies.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zg.netflixcmp.movies.data.repositories.MoviesRepository
+import com.zg.netflixcmp.movies.data.repositories.MoviesRepositoryImpl
 import com.zg.netflixcmp.movies.presentation.actions.DetailsActions
 import com.zg.netflixcmp.movies.presentation.events.DetailsEvents
 import com.zg.netflixcmp.movies.presentation.states.MovieDetailsState
-import io.ktor.events.Events
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow

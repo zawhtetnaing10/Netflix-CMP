@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -60,7 +61,7 @@ fun LoginScreen(
 
 @Composable
 fun LoginContent(onTapLogin: () -> Unit, modifier: Modifier = Modifier) {
-    Surface(color = Black, modifier = Modifier.fillMaxSize()) {
+    Surface(color = Black, modifier = Modifier.fillMaxSize().testTag("LOGIN_SCREEN_BODY")) {
         Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()) {
             Column(modifier = Modifier.padding(MARGIN_XXLARGE)) {
                 NetflixOutlineTextField(
@@ -77,7 +78,8 @@ fun LoginContent(onTapLogin: () -> Unit, modifier: Modifier = Modifier) {
                     title = stringResource(Res.string.sign_in),
                     onButtonTapped = {
                         onTapLogin()
-                    }
+                    },
+                    modifier = Modifier.testTag("SIGN_IN_BUTTON")
                 )
                 Spacer(Modifier.height(MARGIN_MEDIUM_2))
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {

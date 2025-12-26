@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import com.zg.netflixcmp.movies.data.vos.GenreVO
 import com.zg.netflixcmp.movies.data.vos.MovieVO
@@ -27,7 +28,7 @@ fun TitleAndMovieList(genre: GenreVO, movies : List<MovieVO>, onTapMovie: (Int) 
             color = White,
             fontWeight = FontWeight.Bold,
             fontSize = TEXT_REGULAR_3X,
-            modifier = Modifier.padding(horizontal = MARGIN_MEDIUM_2)
+            modifier = Modifier.padding(horizontal = MARGIN_MEDIUM_2).testTag("FIRST_GENRE_NAME-${genre.name}")
         )
         Spacer(Modifier.height(MARGIN_MEDIUM))
         LazyRow(

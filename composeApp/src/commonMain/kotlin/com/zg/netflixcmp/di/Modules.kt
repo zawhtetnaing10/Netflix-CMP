@@ -4,6 +4,7 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.zg.netflixcmp.core.persistence.AppDatabase
 import com.zg.netflixcmp.core.persistence.DatabaseFactory
 import com.zg.netflixcmp.movies.data.repositories.MoviesRepository
+import com.zg.netflixcmp.movies.data.repositories.MoviesRepositoryImpl
 import com.zg.netflixcmp.movies.network.api_services.MoviesApiService
 import com.zg.netflixcmp.movies.network.api_services.impls.MoviesApiServiceImpl
 import com.zg.netflixcmp.movies.presentation.HomeViewModel
@@ -27,7 +28,7 @@ val sharedModule: Module = module {
 
     single<MoviesApiService> { MoviesApiServiceImpl() }
     single<MoviesRepository> {
-        MoviesRepository(
+        MoviesRepositoryImpl(
             movieApiService = get(),
             movieDao = get<AppDatabase>().movieDao()
         )
