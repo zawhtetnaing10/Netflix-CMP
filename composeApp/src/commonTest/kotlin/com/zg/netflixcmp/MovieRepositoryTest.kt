@@ -7,8 +7,11 @@ import com.zg.netflixcmp.mock.data.mockMovieDetails
 import com.zg.netflixcmp.mock.data.mockMoviesByGenre
 import com.zg.netflixcmp.mock.data.mockNowPlayingMovies
 import com.zg.netflixcmp.movies.data.repositories.MoviesRepository
+import com.zg.netflixcmp.movies.data.vos.GenreVO
+import com.zg.netflixcmp.movies.data.vos.MovieVO
 import com.zg.netflixcmp.movies.network.api_services.MoviesApiService
 import com.zg.netflixcmp.movies.persistence.daos.MovieDao
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -69,7 +72,44 @@ class MovieRepositoryTest {
         }
     }
 
-    // TODO: - Get Movies By First Five Genres
+    @Test
+    fun getMoviesByFirstFiveGenres_apiSucceeds_returnsMoviesByGenre() {
+        runTest {
+            val result: List<Pair<GenreVO, List<MovieVO>>> = repo.getMoviesWithFirstFiveGenres()
 
-    // TODO: - Get Movie Details
+            val dataToCompare: MutableList<Pair<GenreVO, List<MovieVO>>> = mutableListOf()
+            mockGenres.take(5).forEach {
+                val moviesByGenre = mockMoviesByGenre[it.id] ?: listOf()
+                dataToCompare.add(Pair(it, moviesByGenre))
+            }
+
+            assertEquals(result, dataToCompare)
+        }
+    }
+
+    @Test
+    fun getMovieDetails_apiSucceeds_returnsMovieDetails() {
+        runTest {
+            val movieDetails = repo.getMovieDetails(28)
+            assertEquals(movieDetails, mockMovieDetails)
+        }
+    }
+
+    @Test
+    fun getMovieByIdFromDb_dbSucceeds_returnsMovieDetails(){
+        runTest {
+            val nowPlayingMovies = repo.getNowPlayingMovies()?.results ?: listOf()
+
+            val movieToTest = repo.getMoviesByIdFromDb(nowPlayingMovies.first().id).first()
+            assertEquals(movieToTest, nowPlayingMovies.first())
+        }
+    }
+
+    @Test
+    fun getGenres_apiSucceeds_returnsGenreList(){
+        runTest {
+            val genres = repo.getGenres()
+            assertEquals(genres , mockGenres)
+        }
+    }
 }
