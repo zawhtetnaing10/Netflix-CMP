@@ -8,6 +8,7 @@ import com.zg.netflixcmp.movies.network.api_services.MoviesApiService
 import com.zg.netflixcmp.movies.network.api_services.impls.MoviesApiServiceImpl
 import com.zg.netflixcmp.movies.network.responses.MovieListResponse
 import com.zg.netflixcmp.core.persistence.AppDatabase
+import com.zg.netflixcmp.movies.persistence.daos.MovieDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
@@ -16,16 +17,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-object MoviesRepository {
-    val movieApiService: MoviesApiService = MoviesApiServiceImpl
-
-    val appDatabase = AppDatabaseProvider.appDatabase
+class MoviesRepository(
+    private val movieApiService: MoviesApiService,
+    private val movieDao: MovieDao
+) {
 
     suspend fun getNowPlayingMovies(): MovieListResponse? {
         return withContext(Dispatchers.IO) {
             val nowPlayingMovies = movieApiService.getNowPlayingMovies(1)
             launch {
-                appDatabase.movieDao().insertMovies(nowPlayingMovies?.results ?: listOf())
+                movieDao.insertMovies(nowPlayingMovies?.results ?: listOf())
             }
             return@withContext nowPlayingMovies
         }
@@ -42,11 +43,11 @@ object MoviesRepository {
     }
 
     suspend fun getFeaturedMovieFromDb(): MovieVO? {
-        return appDatabase.movieDao().getFeaturedMovie()
+        return movieDao.getFeaturedMovie()
     }
 
     suspend fun getMoviesByIdFromDb(movieId: Int): Flow<MovieVO?> {
-        return appDatabase.movieDao().getMovieById(movieId)
+        return movieDao.getMovieById(movieId)
     }
 
     suspend fun getGenres(): List<GenreVO> {
@@ -82,7 +83,7 @@ object MoviesRepository {
         return withContext(Dispatchers.IO) {
             val movieDetails = movieApiService.getMovieDetails(movieId)
             movieDetails?.let {
-                appDatabase.movieDao().saveSingleMovie(movieDetails)
+                movieDao.saveSingleMovie(movieDetails)
             }
             movieDetails
         }

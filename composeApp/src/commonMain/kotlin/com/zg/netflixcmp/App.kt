@@ -4,15 +4,11 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import androidx.room.RoomDatabase
 import com.zg.netflixcmp.auth.screens.LoginScreen
-import com.zg.netflixcmp.core.data.AppDatabaseProvider
-import com.zg.netflixcmp.core.persistence.AppDatabase
 import com.zg.netflixcmp.movies.presentation.HomeRoute
 import com.zg.netflixcmp.movies.presentation.HomeViewModel
 import com.zg.netflixcmp.movies.presentation.MovieDetailsRoute
@@ -21,16 +17,12 @@ import com.zg.netflixcmp.movies.presentation.events.DetailsEvents
 import com.zg.netflixcmp.movies.presentation.events.HomeEvents
 import com.zg.netflixcmp.utils.NetflixSansTypography
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 @Preview
-fun App(
-    databaseBuilder: RoomDatabase.Builder<AppDatabase>
-) {
-
-    // Initialize AppDatabase
-    AppDatabaseProvider.initializeAppDatabase(databaseBuilder)
-
+fun App() {
     val navController = rememberNavController()
 
     MaterialTheme(
@@ -56,7 +48,7 @@ fun App(
             ) {
 
                 // Initialize View Model
-                val homeViewModel = viewModel { HomeViewModel() }
+                val homeViewModel = koinViewModel<HomeViewModel>()
 
                 HomeRoute(
                     viewModel = homeViewModel,
@@ -78,7 +70,9 @@ fun App(
 
                 val args = backStackEntry.toRoute<AppRoute.MovieDetails>()
 
-                val detailsViewModel = viewModel { MovieDetailsViewModel(movieId = args.movieId) }
+                val detailsViewModel = koinViewModel<MovieDetailsViewModel>(parameters = {
+                    parametersOf(args.movieId)
+                })
 
                 MovieDetailsRoute(
                     viewModel = detailsViewModel,

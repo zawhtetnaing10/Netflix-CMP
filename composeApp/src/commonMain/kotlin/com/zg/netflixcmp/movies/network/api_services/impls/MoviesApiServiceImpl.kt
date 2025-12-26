@@ -14,7 +14,7 @@ import com.zg.netflixcmp.movies.network.responses.MovieListResponse
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 
-object MoviesApiServiceImpl : MoviesApiService {
+class MoviesApiServiceImpl : MoviesApiService {
     override suspend fun getNowPlayingMovies(page: Int): MovieListResponse? {
         val httpResponse = HttpClientProvider.httpClient.get("$NOW_PLAYING_MOVIES?page=$page") {
             header("Authorization", "Bearer $API_KEY")
